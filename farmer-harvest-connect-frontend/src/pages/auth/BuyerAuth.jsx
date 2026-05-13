@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { HiOutlineUser, HiOutlineMail, HiOutlineLockClosed, HiOutlinePhone, HiOutlineOfficeBuilding } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../api/axios';
 import { Input, Button } from '../../components/common/UI';
 
 export function BuyerAuth() {
@@ -28,11 +29,31 @@ export function BuyerAuth() {
     ev.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1200));
-    login({ name: form.name || 'Buyer Demo', email: form.email, role: 'buyer' }, 'mock-buyer-token');
-    toast.success(mode === 'login' ? 'Welcome back! 🛒' : 'Account created! 🎉');
-    navigate('/buyer');
-    setLoading(false);
+    try {
+      if (mode === 'login') {
+        const res = await api.post('/auth/login', { email: form.email, password: form.password, role: 'buyer' });
+        const { token, user } = res.data.data;
+        login(user, token);
+        toast.success('Welcome back! 🛒');
+        navigate('/buyer');
+      } else {
+        const res = await api.post('/auth/register', {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          role: 'buyer',
+        });
+        const { token, user } = res.data.data;
+        login(user, token);
+        toast.success('Account created! 🎉');
+        navigate('/buyer');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

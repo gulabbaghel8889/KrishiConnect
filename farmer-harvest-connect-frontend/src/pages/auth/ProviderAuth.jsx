@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { HiOutlineUser, HiOutlineMail, HiOutlineLockClosed, HiOutlinePhone, HiOutlineTruck } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../api/axios';
 import { Input, Button } from '../../components/common/UI';
 
 export default function ProviderAuth() {
@@ -22,11 +23,32 @@ export default function ProviderAuth() {
       return;
     }
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1200));
-    login({ name: form.name || 'Provider Demo', email: form.email, role: 'provider' }, 'mock-provider-token');
-    toast.success('Welcome back! 🚚');
-    navigate('/provider');
-    setLoading(false);
+    try {
+      if (mode === 'login') {
+        const res = await api.post('/auth/login', { email: form.email, password: form.password, role: 'provider' });
+        const { token, user } = res.data.data;
+        login(user, token);
+        toast.success('Welcome back! 🚚');
+        navigate('/provider');
+      } else {
+        const res = await api.post('/auth/register', {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          role: 'provider',
+          profile: { serviceType: form.serviceType },
+        });
+        const { token, user } = res.data.data;
+        login(user, token);
+        toast.success('Account created! 🎉');
+        navigate('/provider');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

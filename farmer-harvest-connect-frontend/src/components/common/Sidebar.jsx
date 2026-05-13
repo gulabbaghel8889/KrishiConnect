@@ -63,6 +63,7 @@ const NAV_CONFIG = {
       { to: '/admin/disputes',     label: 'Disputes',       icon: HiOutlineExclamationCircle },
       { to: '/admin/listings',     label: 'Listings',       icon: HiOutlineCollection },
       { to: '/admin/trees',        label: 'Tree Posting',   icon: GiWheat },
+      { to: '/admin/tree-requests', label: 'Tree Requests',  icon: HiOutlineShoppingCart },
     ],
   },
 };

@@ -43,6 +43,7 @@ import AdminTransactions from './pages/admin/Transactions';
 import AdminDisputes from './pages/admin/Disputes';
 import AdminListings from './pages/admin/Listings';
 import AdminTrees from './pages/admin/TreePosting';
+import AdminTreeRequests from './pages/admin/TreeRequests';
 import TreeExplorer from './pages/TreeExplorer';
 import FarmerOrders from './pages/farmer/FarmerOrders';
 import ChatPage from './pages/chat/ChatPage';
@@ -151,6 +152,7 @@ export default function App() {
   <Route path="disputes" element={<AdminDisputes />} />
   <Route path="listings" element={<AdminListings />} />
   <Route path="trees" element={<AdminTrees />} />
+  <Route path="tree-requests" element={<AdminTreeRequests />} />
   <Route path="tree-explorer" element={<TreeExplorer />} />
 </Route>
 

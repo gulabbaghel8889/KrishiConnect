@@ -43,4 +43,9 @@ router.post('/trees',                         upload.single('image'), require('.
 router.get('/trees',                          require('../controllers/adminController').getTrees);
 router.delete('/trees/:id',                   require('../controllers/adminController').deleteTree);
 
+/* Tree Requests (Admin) */
+const { getAllTreeRequests, updateRequestStatus } = require('../controllers/treeRequestController');
+router.get('/tree-requests',                  getAllTreeRequests);
+router.patch('/tree-requests/:id/status',     updateRequestStatus);
+
 module.exports = router;

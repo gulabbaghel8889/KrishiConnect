@@ -4,12 +4,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { HiOutlineUser, HiOutlineMail, HiOutlineLockClosed, HiOutlinePhone, HiOutlineOfficeBuilding } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../api/axios';
+import { buyerApi } from '../../api/axios';
 import { Input, Button } from '../../components/common/UI';
 
 export function BuyerAuth() {
   const [mode, setMode] = useState('login');
-  const [form, setForm] = useState({ email: 'buyer@demo.com', password: 'demo123' });
+  const [form, setForm] = useState({ email: 'priya@buyer.com', password: 'Buyer@123' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -31,18 +31,18 @@ export function BuyerAuth() {
     setLoading(true);
     try {
       if (mode === 'login') {
-        const res = await api.post('/auth/login', { email: form.email, password: form.password, role: 'buyer' });
+        const res = await buyerApi.login({ email: form.email, password: form.password });
         const { token, user } = res.data.data;
         login(user, token);
         toast.success('Welcome back! 🛒');
         navigate('/buyer');
       } else {
-        const res = await api.post('/auth/register', {
+        const res = await buyerApi.register({
           name: form.name,
           email: form.email,
           phone: form.phone,
           password: form.password,
-          role: 'buyer',
+          profile: { businessName: form.bizType },
         });
         const { token, user } = res.data.data;
         login(user, token);

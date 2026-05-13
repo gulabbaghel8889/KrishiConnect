@@ -3,7 +3,7 @@ export const initiatePayment = async (
   token
 ) => {
   const response = await fetch(
-    "http://localhost:5000/api/payments/create-order",
+    "http://localhost:5001/api/payments/create-order",
     {
       method: "POST",
       headers: {

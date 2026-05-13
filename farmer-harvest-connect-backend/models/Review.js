@@ -2,9 +2,14 @@ const mongoose = require("mongoose");
 
 const reviewSchema = new mongoose.Schema(
   {
-    product: {
+    cropId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "CropListing",
+      required: true,
+    },
+    purchaseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Purchase",
       required: true,
     },
     user: {

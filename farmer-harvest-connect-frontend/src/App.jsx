@@ -42,12 +42,30 @@ import AdminUsers from './pages/admin/Users';
 import AdminTransactions from './pages/admin/Transactions';
 import AdminDisputes from './pages/admin/Disputes';
 import AdminListings from './pages/admin/Listings';
+import AdminTrees from './pages/admin/TreePosting';
+import TreeExplorer from './pages/TreeExplorer';
 import FarmerOrders from './pages/farmer/FarmerOrders';
 import ChatPage from './pages/chat/ChatPage';
 const ProtectedRoute = ({ children, role }) => {
   const { user, isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <Navigate to="/" replace />;
-  if (role && user?.role !== role) return <Navigate to="/" replace />;
+  
+  console.log('ProtectedRoute Check:', { 
+    path: window.location.pathname,
+    isAuthenticated, 
+    requiredRole: role, 
+    userRole: user?.role 
+  });
+
+  if (!isAuthenticated) {
+    console.warn('ProtectedRoute: Not authenticated, redirecting to /');
+    return <Navigate to="/" replace />;
+  }
+  
+  if (role && user?.role !== role) {
+    console.warn(`ProtectedRoute: Role mismatch (expected ${role}, got ${user?.role}), redirecting to /`);
+    return <Navigate to="/" replace />;
+  }
+  
   return children;
 };
 
@@ -79,6 +97,7 @@ export default function App() {
          <Route path="feedback" element={<FarmerFeedback />} />
          <Route path="profile" element={<FarmerProfile />} />
          <Route path="orders" element={<FarmerOrders />} />
+         <Route path="tree-explorer" element={<TreeExplorer />} />
       </Route>
 
         {/* Provider Dashboard */}
@@ -96,24 +115,26 @@ export default function App() {
           <Route path="bookings" element={<Bookings />} />
           <Route path="feedback" element={<ProviderFeedback />} />
            <Route path="profile" element={<ProviderProfile />} />
-         
+           <Route path="tree-explorer" element={<TreeExplorer />} />
+          
         </Route>
-        // Buyer Dashboard
-        <Route
-  path="/buyer"
-  element={
-    <ProtectedRoute role="buyer">
-      <DashboardLayout role="buyer" />
 
-    </ProtectedRoute>
-  }
->
+        {/* Buyer Dashboard */}
+        <Route
+          path="/buyer"
+          element={
+            <ProtectedRoute role="buyer">
+              <DashboardLayout role="buyer" />
+            </ProtectedRoute>
+          }
+        >
   <Route index element={<BuyerDashboard />} />
   <Route path="listings" element={<BuyerListings />} />
   <Route path="chat" element={<BuyerChat />} />
 <Route path="orders" element={<BuyerOrders />} />
-<Route path="reviews" element={<BuyerReviews />} />
-<Route path="profile" element={<BuyerProfile />} />
+  <Route path="reviews" element={<BuyerReviews />} />
+  <Route path="profile" element={<BuyerProfile />} />
+  <Route path="tree-explorer" element={<TreeExplorer />} />
 </Route>  
 
 <Route
@@ -129,6 +150,8 @@ export default function App() {
   <Route path="transactions" element={<AdminTransactions />} />
   <Route path="disputes" element={<AdminDisputes />} />
   <Route path="listings" element={<AdminListings />} />
+  <Route path="trees" element={<AdminTrees />} />
+  <Route path="tree-explorer" element={<TreeExplorer />} />
 </Route>
 
 <Route path="/chat" element={<ChatPage />} />

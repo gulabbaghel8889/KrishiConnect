@@ -7,31 +7,31 @@ import {
 } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../api/axios';
+import api, { farmerApi } from '../../api/axios';
 import { Input, Button } from '../../components/common/UI';
 
 const DEMO = {
-  login:    { email: 'farmer@demo.com', password: 'demo123' },
+  login: { email: 'farmer@demo.com', password: 'demo123' },
   register: { name: 'Ramesh Patel', email: 'ramesh@farm.com', phone: '9876543210', location: 'Indore, MP', password: 'demo123', confirmPassword: 'demo123' },
 };
 
 export default function FarmerAuth() {
-  const [mode, setMode]     = useState('login');
-  const [form, setForm]     = useState(DEMO[mode]);
+  const [mode, setMode] = useState('login');
+  const [form, setForm] = useState(DEMO[mode]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
 
   const validate = () => {
     const e = {};
-    if (!form.email?.trim())    e.email    = 'Email required';
+    if (!form.email?.trim()) e.email = 'Email required';
     if (!form.password?.trim()) e.password = 'Password required';
     if (mode === 'register') {
-      if (!form.name?.trim())   e.name     = 'Name required';
-      if (!form.phone?.trim())  e.phone    = 'Phone required';
+      if (!form.name?.trim()) e.name = 'Name required';
+      if (!form.phone?.trim()) e.phone = 'Phone required';
       if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
     }
     setErrors(e);
@@ -40,30 +40,45 @@ export default function FarmerAuth() {
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
-    if (!validate()) return;
+    console.log('FarmerAuth: Form submission started', { mode, form });
+
+    if (!validate()) {
+      console.log('FarmerAuth: Validation failed', errors);
+      return;
+    }
+
     setLoading(true);
     try {
       if (mode === 'login') {
-        const res = await api.post('/auth/login', { email: form.email, password: form.password, role: 'farmer' });
+        console.log('FarmerAuth: Attempting login...');
+        const res = await farmerApi.login({
+          email: form.email,
+          password: form.password
+        });
+        console.log('FarmerAuth: Login successful', res.data);
         const { token, user } = res.data.data;
         login(user, token);
         toast.success('Welcome back! 🌾');
         navigate('/farmer');
       } else {
-        const res = await api.post('/auth/register', {
+        console.log('FarmerAuth: Attempting registration...');
+        const res = await farmerApi.register({
           name: form.name,
           email: form.email,
           phone: form.phone,
           password: form.password,
-          role: 'farmer',
+          profile: { location: form.location }
         });
+        console.log('FarmerAuth: Registration successful', res.data);
         const { token, user } = res.data.data;
         login(user, token);
         toast.success('Account created! Welcome aboard 🎉');
         navigate('/farmer');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Authentication failed');
+      console.error('FarmerAuth: Request failed', err);
+      const msg = err.response?.data?.message || 'Authentication failed';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -132,9 +147,8 @@ export default function FarmerAuth() {
               <button
                 key={m}
                 onClick={() => { setMode(m); setForm(DEMO[m]); setErrors({}); }}
-                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                  mode === m ? 'bg-white text-forest-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                }`}
+                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${mode === m ? 'bg-white text-forest-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 {m === 'login' ? 'Login' : 'Register'}
               </button>

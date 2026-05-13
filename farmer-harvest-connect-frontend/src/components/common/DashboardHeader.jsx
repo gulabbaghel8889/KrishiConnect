@@ -232,7 +232,7 @@
 //   const fetchNotifications = async () => {
 //     try {
 //       const res = await fetch(
-//         'http://localhost:5000/api/notifications'
+//         'http://localhost:5001/api/notifications'
 //       );
 
 //       const data = await res.json();
@@ -253,7 +253,7 @@
 //   const markAsRead = async (id) => {
 //     try {
 //       await fetch(
-//         `http://localhost:5000/api/notifications/read/${id}`,
+//         `http://localhost:5001/api/notifications/read/${id}`,
 //         {
 //           method: 'PUT',
 //         }
@@ -437,7 +437,7 @@ export default function DashboardHeader({
   const fetchNotifications = async () => {
     try {
       const res = await fetch(
-        'http://localhost:5000/api/notifications'
+        'http://localhost:5001/api/notifications'
       );
 
       const data = await res.json();
@@ -458,7 +458,7 @@ export default function DashboardHeader({
   const markAsRead = async (id) => {
     try {
       await fetch(
-        `http://localhost:5000/api/notifications/read/${id}`,
+        `http://localhost:5001/api/notifications/read/${id}`,
         {
           method: 'PUT',
         }
@@ -516,6 +516,15 @@ export default function DashboardHeader({
         id="google_translate_element"
         className="hidden md:flex items-center"
       ></div>
+
+      {/* Tree Explorer Link */}
+      <button
+        onClick={() => window.location.href = `/${role}/tree-explorer`}
+        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-50 text-forest-600 hover:bg-forest-100 transition-all font-bold text-sm border border-forest-100 shadow-sm"
+      >
+        <span className="text-xl">🌳</span>
+        <span className="hidden lg:inline">Tree Explorer</span>
+      </button>
 
       {/* Notifications */}
       <div className="relative">

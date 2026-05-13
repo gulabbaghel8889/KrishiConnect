@@ -1,43 +1,48 @@
 const Review = require("../models/Review");
+const Purchase = require("../models/Purchase");
+const asyncHandler = require("express-async-handler");
 
-exports.addReview = async (req, res) => {
-  try {
-    const { product, rating, comment } = req.body;
+/* ADD REVIEW FOR A CROP */
+exports.addReview = asyncHandler(async (req, res) => {
+  const { cropId, purchaseId, rating, comment } = req.body;
 
-    const review = await Review.create({
-      product,
-      user: req.user.id,
-      rating,
-      comment,
-    });
+  // Verify purchase exists and belongs to this buyer
+  const purchase = await Purchase.findOne({
+    _id: purchaseId,
+    buyerId: req.user._id,
+    listingId: cropId
+  });
 
-    res.status(201).json({
-      success: true,
-      message: "Review added successfully",
-      review,
-    });
-  } catch (error) {
-    res.status(500).json({
+  if (!purchase) {
+    return res.status(403).json({
       success: false,
-      message: error.message,
+      message: "You can only review crops you have purchased."
     });
   }
-};
 
-exports.getProductReviews = async (req, res) => {
-  try {
-    const reviews = await Review.find({
-      product: req.params.productId,
-    }).populate("user", "name");
+  const review = await Review.create({
+    cropId,
+    purchaseId,
+    user: req.user._id,
+    rating,
+    comment,
+  });
 
-    res.status(200).json({
-      success: true,
-      reviews,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+  res.status(201).json({
+    success: true,
+    message: "Review added successfully",
+    review,
+  });
+});
+
+/* GET REVIEWS FOR A CROP */
+exports.getCropReviews = asyncHandler(async (req, res) => {
+  const reviews = await Review.find({
+    cropId: req.params.cropId,
+  }).populate("user", "name profile.avatar");
+
+  res.status(200).json({
+    success: true,
+    reviews,
+  });
+});

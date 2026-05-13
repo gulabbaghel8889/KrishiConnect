@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io('http://localhost:5001');
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([]);
@@ -27,7 +27,7 @@ export default function ChatPage() {
 
   const fetchMessages = async () => {
     const res = await fetch(
-      `http://localhost:5000/api/messages?user1=${senderId}&user2=${receiverId}`
+      `http://localhost:5001/api/messages?user1=${senderId}&user2=${receiverId}`
     );
 
     const data = await res.json();
@@ -47,7 +47,7 @@ export default function ChatPage() {
       message: text,
     };
 
-    await fetch('http://localhost:5000/api/messages', {
+    await fetch('http://localhost:5001/api/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

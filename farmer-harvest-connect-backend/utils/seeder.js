@@ -55,7 +55,7 @@ async function seed() {
     const services = await ServiceListing.insertMany([
       {
         providerId:  provider1._id,
-        vehicleDetails: { type: 'Truck (10 Ton)', count: 3, capacity: '10 Ton' },
+        vehicleDetails: { vehicleType: 'Truck (10 Ton)', count: 3, capacity: '10 Ton' },
         manpowerDetails: { available: 0 },
         pricePerDay: 4200, serviceType: 'transport',
         availability: { isAvailable: true },
@@ -64,7 +64,7 @@ async function seed() {
       },
       {
         providerId: provider2._id,
-        vehicleDetails: { type: 'Tractor + Trailer', count: 2, capacity: '5 Ton' },
+        vehicleDetails: { vehicleType: 'Tractor + Trailer', count: 2, capacity: '5 Ton' },
         manpowerDetails: { available: 8, skills: ['harvesting', 'loading'] },
         pricePerDay: 3500, serviceType: 'both',
         availability: { isAvailable: true },

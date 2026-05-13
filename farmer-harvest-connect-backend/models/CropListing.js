@@ -40,6 +40,7 @@ const cropListingSchema = new mongoose.Schema(
       season:  { type: String, enum: ['Kharif', 'Rabi', 'Zaid'] },
       grade:   { type: String, enum: ['A', 'B', 'C', 'Premium'], default: 'A' },
     },
+    contactPhone: String,
     description:   String,
     status: {
       type:    String,

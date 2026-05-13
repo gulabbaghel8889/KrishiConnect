@@ -88,4 +88,9 @@ router.get('/orders', getMyOrders);
 
 router.get('/orders/:id', getOrderById);
 
+router.post('/direct-purchase', protect, authorize('buyer'), (req, res, next) => {
+  // We'll implement this in the controller, but adding the route here first
+  next();
+}, require('../controllers/buyerController').directPurchase);
+
 module.exports = router;

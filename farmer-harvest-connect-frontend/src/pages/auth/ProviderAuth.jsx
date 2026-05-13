@@ -3,12 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { HiOutlineUser, HiOutlineMail, HiOutlineLockClosed, HiOutlinePhone, HiOutlineTruck } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../api/axios';
+import { providerApi } from '../../api/axios';
 import { Input, Button } from '../../components/common/UI';
 
 export default function ProviderAuth() {
   const [mode, setMode] = useState('login');
-  const [form, setForm] = useState({ email: 'provider@demo.com', password: 'demo123' });
+  const [form, setForm] = useState({ email: 'provider1@fhc.com', password: 'Provider@123' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -25,18 +25,17 @@ export default function ProviderAuth() {
     setLoading(true);
     try {
       if (mode === 'login') {
-        const res = await api.post('/auth/login', { email: form.email, password: form.password, role: 'provider' });
+        const res = await providerApi.login({ email: form.email, password: form.password });
         const { token, user } = res.data.data;
         login(user, token);
         toast.success('Welcome back! 🚚');
         navigate('/provider');
       } else {
-        const res = await api.post('/auth/register', {
+        const res = await providerApi.register({
           name: form.name,
           email: form.email,
           phone: form.phone,
           password: form.password,
-          role: 'provider',
           profile: { serviceType: form.serviceType },
         });
         const { token, user } = res.data.data;

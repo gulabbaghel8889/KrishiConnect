@@ -3,22 +3,43 @@ import { useNavigate } from 'react-router-dom';
 import { HiOutlineShieldCheck, HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
+import { adminApi } from '../../api/axios';
 import { Input, Button } from '../../components/common/UI';
 
+const DEMO = {
+  login:    { email: 'admin@fhc.com', password: 'Admin@1234' },
+};
+
 export default function AdminLogin() {
-  const [form, setForm] = useState({ email: 'admin@fhc.com', password: 'admin123' });
+  const [form, setForm] = useState(DEMO.login);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
+    if (!form.email || !form.password) {
+      toast.error('Please enter both email and password');
+      return;
+    }
+
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1200));
-    login({ name: 'Admin', email: form.email, role: 'admin' }, 'mock-admin-token');
-    toast.success('Admin access granted 🔐');
-    navigate('/admin');
-    setLoading(false);
+    try {
+      const res = await adminApi.login({ 
+        email: form.email, 
+        password: form.password 
+      });
+      const { token, user } = res.data.data;
+      login(user, token);
+      toast.success('Admin access granted 🔐');
+      navigate('/admin');
+    } catch (err) {
+      console.error('AdminLogin: Login failed', err);
+      const msg = err.response?.data?.message || 'Authentication failed';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

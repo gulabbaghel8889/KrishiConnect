@@ -27,15 +27,25 @@ const register = asyncHandler(async (req, res) => {
     return badRequest(res, 'Admin accounts cannot be self-registered');
   }
 
-  const existing = await User.findOne({ email: email.toLowerCase() });
-  if (existing) {
-    return badRequest(res, 'An account with this email already exists');
+  /* Manual check for existing user (backup for DB unique constraints) */
+  const existingEmail = await User.findOne({ email: email.toLowerCase() });
+  if (existingEmail) return badRequest(res, 'An account with this email already exists');
+
+  const existingPhone = await User.findOne({ phone });
+  if (existingPhone) return badRequest(res, 'An account with this phone number already exists');
+
+  try {
+    const user = await User.create({ name, email, password, phone, role, profile });
+    const token = generateToken(user);
+    return created(res, { token, user: sanitizeUser(user) }, 'Account created successfully');
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0] || 'field';
+      const message = `An account with this ${field} already exists`;
+      return badRequest(res, message);
+    }
+    throw error;
   }
-
-  const user = await User.create({ name, email, password, phone, role, profile });
-  const token = generateToken(user);
-
-  return created(res, { token, user: sanitizeUser(user) }, 'Account created successfully');
 });
 
 /* ─────────────────────────────────────────────────────────────────────────────

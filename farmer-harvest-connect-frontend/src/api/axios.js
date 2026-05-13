@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -20,7 +20,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
+    // Only redirect to landing if it's a 401 and NOT a login/register request
+    const isAuthRequest = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/register');
+    
+    if (error.response?.status === 401 && !isAuthRequest) {
       localStorage.removeItem('fhc_token');
       localStorage.removeItem('fhc_user');
       window.location.href = '/';
@@ -33,8 +36,8 @@ export default api;
 
 // API helpers
 export const farmerApi = {
-  register:       (data) => api.post('/farmer/register', data),
-  login:          (data) => api.post('/farmer/login', data),
+  register:       (data) => api.post('/auth/register', { ...data, role: 'farmer' }),
+  login:          (data) => api.post('/auth/login', { ...data, role: 'farmer' }),
   postHarvest:    (data) => api.post('/farmer/harvest', data),
   getOffers:      ()     => api.get('/farmer/offers'),
   respondOffer:   (id, status) => api.patch(`/farmer/offers/${id}`, { status }),
@@ -46,8 +49,8 @@ export const farmerApi = {
 };
 
 export const providerApi = {
-  register:      (data) => api.post('/provider/register', data),
-  login:         (data) => api.post('/provider/login', data),
+  register:      (data) => api.post('/auth/register', { ...data, role: 'provider' }),
+  login:         (data) => api.post('/auth/login', { ...data, role: 'provider' }),
   postService:   (data) => api.post('/provider/services', data),
   getServices:   ()     => api.get('/provider/services'),
   deleteService: (id)   => api.delete(`/provider/services/${id}`),
@@ -58,8 +61,8 @@ export const providerApi = {
 };
 
 export const buyerApi = {
-  register:     (data)  => api.post('/buyer/register', data),
-  login:        (data)  => api.post('/buyer/login', data),
+  register:     (data)  => api.post('/auth/register', { ...data, role: 'buyer' }),
+  login:        (data)  => api.post('/auth/login', { ...data, role: 'buyer' }),
   getCrops:     (params)=> api.get('/buyer/crops', { params }),
   makeOffer:    (data)  => api.post('/buyer/offers', data),
   getOrders:    ()      => api.get('/buyer/orders'),
@@ -68,7 +71,7 @@ export const buyerApi = {
 };
 
 export const adminApi = {
-  login:         (data) => api.post('/admin/login', data),
+  login:         (data) => api.post('/auth/login', { ...data, role: 'admin' }),
   getStats:      ()     => api.get('/admin/stats'),
   getUsers:      ()     => api.get('/admin/users'),
   blockUser:     (id)   => api.patch(`/admin/users/${id}/block`),

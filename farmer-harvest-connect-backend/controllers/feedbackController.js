@@ -29,8 +29,8 @@ const submitFeedback = asyncHandler(async (req, res) => {
   ]);
   if (stats[0]) {
     await User.findByIdAndUpdate(toUser, {
-      'profile.rating':      Math.round(stats[0].avg * 10) / 10,
-      'profile.reviewCount': stats[0].count,
+      averageRating: Math.round(stats[0].avg * 10) / 10,
+      totalRatings: stats[0].count,
     });
   }
 

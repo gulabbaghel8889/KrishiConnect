@@ -24,6 +24,11 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    cropId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'CropListing',
+      required: true
+    },
   },
   {
     timestamps: true,

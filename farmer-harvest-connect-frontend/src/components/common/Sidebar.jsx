@@ -62,6 +62,7 @@ const NAV_CONFIG = {
       { to: '/admin/transactions', label: 'Transactions',   icon: HiOutlineCurrencyRupee },
       { to: '/admin/disputes',     label: 'Disputes',       icon: HiOutlineExclamationCircle },
       { to: '/admin/listings',     label: 'Listings',       icon: HiOutlineCollection },
+      { to: '/admin/trees',        label: 'Tree Posting',   icon: GiWheat },
     ],
   },
 };

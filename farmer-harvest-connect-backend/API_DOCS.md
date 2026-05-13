@@ -1,6 +1,6 @@
 # Farmer Harvest Connect — REST API Reference
 
-**Base URL:** `http://localhost:5000/api`  
+**Base URL:** `http://localhost:5001/api`  
 **Auth:** Bearer Token (JWT) in `Authorization: Bearer <token>` header
 
 ---
@@ -505,11 +505,11 @@ npm run seed
 
 # 4. Start dev server
 npm run dev
-# Server: http://localhost:5000
-# Health: http://localhost:5000/health
+# Server: http://localhost:5001
+# Health: http://localhost:5001/health
 
 # 5. Test auth
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST http://localhost:5001/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"ramesh@farmer.com","password":"Farmer@123"}'
 ```

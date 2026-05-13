@@ -6,8 +6,11 @@ const {
   updateRequestStatus,
 } = require("../controllers/farmerOrderController");
 
-router.get("/", getPurchaseRequests);
+const { protect } = require("../middlewares/auth");
+const { authorize } = require("../middlewares/role");
 
-router.put("/:id", updateRequestStatus);
+router.get("/", protect, authorize('farmer'), getPurchaseRequests);
+
+router.put("/:id", protect, authorize('farmer'), updateRequestStatus);
 
 module.exports = router;

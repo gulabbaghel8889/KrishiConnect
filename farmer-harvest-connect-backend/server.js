@@ -324,6 +324,7 @@ app.use(`${API}/feedback`, feedbackRoutes);
 app.use(`${API}/notifications`, notificationRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/farmer-orders", farmerOrderRoutes);
+app.use("/api/trees", require('./routes/treeRoutes'));
 
 /* 404 */
 app.use(notFoundHandler);
@@ -368,11 +369,77 @@ io.on('connection', (socket) => {
 });
 
 /* START SERVER */
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT, 10) || 5000;
 
-const server = httpServer.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
+let server = null;
+
+const startServer = async (startPort, maxAttempts = 5) => {
+  let port = startPort;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      await new Promise((resolve, reject) => {
+        const s = httpServer.listen(port, () => {
+          logger.info(`Server running on port ${port}`);
+          resolve(s);
+        });
+        s.on('error', (err) => reject(err));
+      });
+      return port;
+    } catch (err) {
+      if (err && err.code === 'EADDRINUSE') {
+        logger.warn(`Port ${port} is in use, trying ${port + 1}`);
+        port += 1;
+        // small delay before retrying
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(r => setTimeout(r, 200));
+        continue;
+      }
+      logger.error('Server error during bind:', err);
+      throw err;
+    }
+  }
+  throw new Error(`Could not bind server after ${maxAttempts} attempts`);
+};
+
+/** Bootstrap admin user from .env if it doesn't exist */
+const bootstrapAdmin = async () => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) return;
+
+    const User = require('./models/User');
+    const adminExists = await User.findOne({ email: adminEmail.toLowerCase() });
+
+    if (!adminExists) {
+      logger.info('🚀 Bootstrapping admin user...');
+      await User.create({
+        name:     process.env.ADMIN_NAME     || 'FHC Admin',
+        email:    adminEmail.toLowerCase(),
+        password: process.env.ADMIN_PASSWORD || 'Admin@1234',
+        role:     'admin',
+        phone:    '9000000001',
+        isVerified: true
+      });
+      logger.info('✅ Admin user created successfully');
+    }
+  } catch (error) {
+    logger.error(`❌ Admin bootstrap failed: ${error.message}`);
+  }
+};
+
+(async () => {
+  try {
+    const boundPort = await startServer(PORT, 10);
+    process.env.PORT = String(boundPort);
+    server = httpServer; // keep reference for graceful shutdown
+    
+    // Create admin user if it doesn't exist
+    await bootstrapAdmin();
+  } catch (err) {
+    logger.error('Failed to start server:', err);
+    process.exit(1);
+  }
+})();
 
 /* GRACEFUL SHUTDOWN */
 const gracefulShutdown = (signal) => {

@@ -26,9 +26,10 @@ const userSchema = new mongoose.Schema(
       select:   false,              // never returned in queries by default
     },
     phone: {
-      type:  String,
-      trim:  true,
-      match: [/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian mobile number'],
+      type:   String,
+      unique: true,
+      trim:   true,
+      match:  [/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian mobile number'],
     },
     role: {
       type:     String,
@@ -55,6 +56,8 @@ const userSchema = new mongoose.Schema(
     lastLogin: Date,
     resetPasswordToken:   String,
     resetPasswordExpires: Date,
+    averageRating: { type: Number, default: 0 },
+    totalRatings: { type: Number, default: 0 },
   },
   {
     timestamps: true,

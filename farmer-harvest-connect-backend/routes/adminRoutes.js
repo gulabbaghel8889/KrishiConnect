@@ -37,4 +37,10 @@ router.patch('/listings/:id/status',          updateListingStatus);
 router.get('/disputes',                       getDisputes);
 router.patch('/disputes/:id/resolve',         resolveDispute);
 
+/* Trees */
+const upload = require('../middlewares/upload');
+router.post('/trees',                         upload.single('image'), require('../controllers/adminController').postTree);
+router.get('/trees',                          require('../controllers/adminController').getTrees);
+router.delete('/trees/:id',                   require('../controllers/adminController').deleteTree);
+
 module.exports = router;

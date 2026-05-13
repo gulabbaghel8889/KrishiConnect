@@ -283,10 +283,64 @@ const resolveDispute = asyncHandler(async (req, res) => {
   return success(res, purchase, `Dispute resolved as ${resolution}`);
 });
 
+const Tree = require('../models/Tree');
+const cloudinary = require('../config/cloudinary');
+
+/** POST /api/admin/trees */
+const postTree = asyncHandler(async (req, res) => {
+  const { name, scientificName, description, category, mrp, benefits, plantationGuide } = req.body;
+  
+  let imageUrl = req.body.image; // Fallback to URL if provided
+
+  if (req.file) {
+    // Upload buffer to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'trees' },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+    imageUrl = uploadResult.secure_url;
+  }
+
+  const tree = await Tree.create({
+    name,
+    scientificName,
+    description,
+    category,
+    mrp,
+    benefits: typeof benefits === 'string' ? benefits.split(',').map(b => b.trim()) : benefits,
+    plantationGuide,
+    image: imageUrl,
+    postedBy: req.user._id,
+  });
+
+  return success(res, tree, 'Tree information posted successfully', 201);
+});
+
+/** GET /api/admin/trees */
+const getTrees = asyncHandler(async (req, res) => {
+  const trees = await Tree.find().sort({ createdAt: -1 });
+  return success(res, trees, 'Trees fetched successfully');
+});
+
+/** DELETE /api/admin/trees/:id */
+const deleteTree = asyncHandler(async (req, res) => {
+  const tree = await Tree.findById(req.params.id);
+  if (!tree) return notFound(res, 'Tree not found');
+  await tree.deleteOne();
+  return success(res, {}, 'Tree post removed successfully');
+});
+
 module.exports = {
   getDashboardStats,
   getUsers, getUserById, toggleBlockUser, deleteUser,
   getTransactions, verifyTransaction, flagDispute,
   getAllListings, removeListing, updateListingStatus,
   getDisputes, resolveDispute,
+  postTree, getTrees, deleteTree,
 };

@@ -9,7 +9,7 @@ const serviceListingSchema = new mongoose.Schema(
       index:    true,
     },
     vehicleDetails: {
-      type:        String,
+      vehicleType: String,
       description: String,
       count:       { type: Number, default: 1 },
       capacity:    String,

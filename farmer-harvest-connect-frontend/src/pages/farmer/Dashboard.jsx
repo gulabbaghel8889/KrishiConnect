@@ -1,8 +1,10 @@
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { HiOutlineClipboardList, HiOutlineTag, HiOutlineShoppingCart, HiOutlineCurrencyRupee } from 'react-icons/hi';
+import { HiOutlineClipboardList, HiOutlineTag, HiOutlineShoppingCart, HiOutlineCurrencyRupee, HiOutlineX } from 'react-icons/hi';
 import { GiWheat } from 'react-icons/gi';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { StatCard, Badge } from '../../components/common/UI';
+import WeatherChart from '../../components/common/WeatherChart';
 
 const AREA_DATA = [
   { month: 'Jan', income: 12000 }, { month: 'Feb', income: 19000 },
@@ -30,6 +32,8 @@ const CROP_LISTINGS = [
 ];
 
 export default function FarmerDashboard() {
+  const [showWeather, setShowWeather] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Stats */}
@@ -39,6 +43,34 @@ export default function FarmerDashboard() {
         <StatCard icon={GiWheat}                 label="Crop Listings" value="5"  change={-2}  color="blue" />
         <StatCard icon={HiOutlineCurrencyRupee}  label="Total Earned"  value="₹3.8L" change={18} color="purple" />
       </div>
+
+      {/* Quick Weather Action */}
+      <div className="flex justify-end">
+        <button 
+          onClick={() => setShowWeather(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-white border border-forest-100 rounded-2xl text-forest-600 font-bold shadow-sm hover:shadow-md hover:bg-forest-50 transition-all group"
+        >
+          <span className="text-xl group-hover:scale-110 transition-transform">🌤️</span>
+          Check Weather Forecast
+        </button>
+      </div>
+
+      {/* Weather Modal */}
+      {showWeather && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w-full max-w-2xl animate-in zoom-in-95 duration-300">
+            <div className="flex justify-end mb-2">
+              <button 
+                onClick={() => setShowWeather(false)}
+                className="p-2 bg-white rounded-full text-gray-500 hover:text-gray-900 shadow-lg"
+              >
+                <HiOutlineX size={20} />
+              </button>
+            </div>
+            <WeatherChart />
+          </div>
+        </div>
+      )}
 
       {/* Charts Row */}
       <div className="grid lg:grid-cols-3 gap-6">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/common/Sidebar';
 import DashboardHeader from '../components/common/DashboardHeader';
+import SupportChatbot from '../components/common/SupportChatbot';
 
 export default function DashboardLayout({ role }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -9,6 +10,9 @@ export default function DashboardLayout({ role }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
+      {/* Support Chatbot */}
+      <SupportChatbot />
+      
       {/* Mobile overlay */}
       {mobileOpen && (
         <div

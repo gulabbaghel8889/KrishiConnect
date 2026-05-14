@@ -3,8 +3,7 @@ import toast from 'react-hot-toast';
 import { PageHeader, Button, Badge } from '../../components/common/UI';
 import { useAuth } from '../../context/AuthContext';
 import { HiOutlineLocationMarker, HiOutlineTag, HiOutlineCash, HiOutlineCube, HiOutlinePhone } from 'react-icons/hi';
-
-const API_BASE = 'http://localhost:5001/api';
+import { API_URL as API_BASE } from '../../config';
 
 export default function FarmerCrops() {
   const { token } = useAuth();

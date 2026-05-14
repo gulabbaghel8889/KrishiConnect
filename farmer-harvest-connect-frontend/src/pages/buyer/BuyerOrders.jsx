@@ -5,8 +5,7 @@ import RatingModal from '../../components/common/RatingModal';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { HiOutlineCube, HiOutlineCalendar, HiOutlineUser, HiOutlineChatAlt2, HiOutlineStar } from 'react-icons/hi';
-
-const API_BASE = 'http://localhost:5001/api';
+import { API_URL as API_BASE } from '../../config';
 
 export default function BuyerOrders() {
   const { token } = useAuth();

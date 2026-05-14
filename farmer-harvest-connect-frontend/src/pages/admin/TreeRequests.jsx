@@ -3,8 +3,7 @@ import { PageHeader, Badge, Button } from '../../components/common/UI';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { HiOutlineCheck, HiOutlineX, HiOutlineTruck, HiOutlineClock, HiOutlinePhone, HiOutlineLocationMarker } from 'react-icons/hi';
-
-const API_BASE = 'http://localhost:5001/api';
+import { API_URL as API_BASE } from '../../config';
 
 export default function AdminTreeRequests() {
   const { token } = useAuth();

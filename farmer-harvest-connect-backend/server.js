@@ -214,6 +214,11 @@ connectDB();
 /* APP */
 const app = express();
 
+// Trust proxy for Render/Cloudflare/etc.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 /* SECURITY */
 app.use(
   helmet({
@@ -344,7 +349,7 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
   },
 });
@@ -429,7 +434,10 @@ const bootstrapAdmin = async () => {
 
 (async () => {
   try {
-    const boundPort = await startServer(PORT, 10);
+    // In production, we MUST bind to the assigned port (Render/Heroku/etc.)
+    // In development, we can afford to scan for an available port.
+    const maxAttempts = process.env.NODE_ENV === 'production' ? 1 : 10;
+    const boundPort = await startServer(PORT, maxAttempts);
     process.env.PORT = String(boundPort);
     server = httpServer; // keep reference for graceful shutdown
     

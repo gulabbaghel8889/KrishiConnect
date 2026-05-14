@@ -5,8 +5,7 @@ import ChatModal from '../../components/common/ChatModal';
 import { useAuth } from '../../context/AuthContext';
 import { HiOutlineLocationMarker, HiOutlinePhone, HiOutlineScale, HiOutlineCash, HiOutlineClipboardList, HiOutlineChatAlt2 } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
-
-const API_BASE = 'http://localhost:5001/api';
+import { API_URL as API_BASE } from '../../config';
 
 export default function BuyerListings() {
   const { token, user } = useAuth();

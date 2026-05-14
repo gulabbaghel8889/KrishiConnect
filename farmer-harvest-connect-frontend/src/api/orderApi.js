@@ -1,12 +1,6 @@
-export const createOrder = async (orderData, token) => {
-  const response = await fetch("http://localhost:5001/api/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(orderData),
-  });
+import api from './axios';
 
-  return response.json();
+export const createOrder = async (orderData) => {
+  const response = await api.post('/orders/create', orderData);
+  return response.data;
 };

@@ -3,8 +3,7 @@ import { Modal, Button } from './UI';
 import toast from 'react-hot-toast';
 import { HiStar } from 'react-icons/hi';
 import { useAuth } from '../../context/AuthContext';
-
-const API_BASE = 'http://localhost:5001/api';
+import { API_URL as API_BASE } from '../../config';
 
 export default function RatingModal({ open, onClose, targetId, targetType, purchaseId, cropId, title }) {
   const { token } = useAuth();

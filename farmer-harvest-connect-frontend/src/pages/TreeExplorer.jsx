@@ -4,8 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { HiOutlineCurrencyRupee, HiOutlineBookOpen, HiOutlineInformationCircle, HiOutlineShoppingCart, HiOutlineX } from 'react-icons/hi';
 import { GiOakLeaf } from 'react-icons/gi';
-
-const API_BASE = 'http://localhost:5001/api';
+import { API_URL as API_BASE } from '../config';
 
 export default function TreeExplorer() {
   const { token, user } = useAuth();

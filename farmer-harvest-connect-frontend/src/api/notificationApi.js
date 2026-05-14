@@ -1,14 +1,6 @@
-export const fetchNotifications = async (
-  token
-) => {
-  const response = await fetch(
-    "http://localhost:5001/api/notifications",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+import api from './axios';
 
-  return response.json();
+export const fetchNotifications = async () => {
+  const response = await api.get('/notifications');
+  return response.data;
 };

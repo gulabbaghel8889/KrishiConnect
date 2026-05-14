@@ -381,6 +381,7 @@ import {
   HiOutlineSearch,
 } from 'react-icons/hi';
 import { useAuth } from '../../context/AuthContext';
+import { API_URL } from '../../config';
 
 export default function DashboardHeader({
   role,
@@ -437,7 +438,7 @@ export default function DashboardHeader({
   const fetchNotifications = async () => {
     try {
       const res = await fetch(
-        'http://localhost:5001/api/notifications'
+        `${API_URL}/notifications`
       );
 
       const data = await res.json();
@@ -458,7 +459,7 @@ export default function DashboardHeader({
   const markAsRead = async (id) => {
     try {
       await fetch(
-        `http://localhost:5001/api/notifications/read/${id}`,
+        `${API_URL}/notifications/read/${id}`,
         {
           method: 'PUT',
         }

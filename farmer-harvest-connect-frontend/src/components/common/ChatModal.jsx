@@ -4,9 +4,9 @@ import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { HiOutlinePaperAirplane, HiOutlineChatAlt2 } from 'react-icons/hi';
 import io from 'socket.io-client';
+import { API_URL, SOCKET_URL } from '../../config';
 
-const API_BASE = 'http://localhost:5001/api';
-const SOCKET_URL = 'http://localhost:5001';
+const API_BASE = API_URL;
 
 export default function ChatModal({ open, onClose, otherUserId, cropId, cropName, otherUserName }) {
   const { token, user } = useAuth();

@@ -5,6 +5,7 @@ import ChatModal from '../../components/common/ChatModal';
 import RatingModal from '../../components/common/RatingModal';
 import { useAuth } from '../../context/AuthContext';
 import { HiOutlineUser, HiOutlinePhone, HiOutlineCube, HiOutlineCash, HiOutlineCalendar, HiOutlineChatAlt2, HiOutlineStar } from 'react-icons/hi';
+import { API_URL } from '../../config';
 
 export default function FarmerOrders() {
   const { token } = useAuth();
@@ -22,7 +23,7 @@ export default function FarmerOrders() {
   const fetchOrders = async () => {
     try {
       const res = await fetch(
-        'http://localhost:5001/api/farmer-orders',
+        `${API_URL}/farmer-orders`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -49,7 +50,7 @@ export default function FarmerOrders() {
   const updateStatus = async (id, status) => {
     try {
       const res = await fetch(
-        `http://localhost:5001/api/farmer-orders/${id}`,
+        `${API_URL}/farmer-orders/${id}`,
         {
           method: 'PUT',
           headers: {
